@@ -1,0 +1,229 @@
+/* ===========================
+   KDK Core Input Area
+=========================== */
+
+.input-area{
+
+    display:flex;
+
+    align-items:flex-end;
+
+    gap:12px;
+
+    padding:18px 25px;
+
+    background:#111827;
+
+    border-top:1px solid #2d3748;
+
+}
+
+/* Input Container */
+
+.input-container{
+
+    flex:1;
+
+    display:flex;
+
+    align-items:flex-end;
+
+    background:#1e293b;
+
+    border-radius:20px;
+
+    padding:10px;
+
+    gap:10px;
+
+}
+
+/* Text Area */
+
+.input-container textarea{
+
+    flex:1;
+
+    background:transparent;
+
+    color:white;
+
+    border:none;
+
+    outline:none;
+
+    resize:none;
+
+    min-height:24px;
+
+    max-height:180px;
+
+    overflow-y:auto;
+
+    font-size:16px;
+
+    line-height:1.6;
+
+    padding:8px;
+
+}
+
+/* Placeholder */
+
+textarea::placeholder{
+
+    color:#94a3b8;
+
+}
+
+/* Buttons */
+
+.icon-btn{
+
+    width:45px;
+
+    height:45px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:transparent;
+
+    color:#cbd5e1;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+    transition:.3s;
+
+}
+
+/* Hover */
+
+.icon-btn:hover{
+
+    background:#334155;
+
+    color:#60a5fa;
+
+}
+
+/* Send Button */
+
+.send-btn{
+
+    width:50px;
+
+    height:50px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:20px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.send-btn:hover{
+
+    background:#1d4ed8;
+
+    transform:scale(1.08);
+
+}
+
+/* Disabled */
+
+.send-btn:disabled{
+
+    background:#475569;
+
+    cursor:not-allowed;
+
+}
+
+/* Scrollbar */
+
+textarea::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+textarea::-webkit-scrollbar-thumb{
+
+    background:#3b82f6;
+
+    border-radius:10px;
+
+}
+
+/* Attachment Preview */
+
+.file-preview{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-top:8px;
+
+    padding:10px;
+
+    border-radius:10px;
+
+    background:#0f172a;
+
+}
+
+.file-preview img{
+
+    width:60px;
+
+    border-radius:8px;
+
+}
+
+/* Recording Animation */
+
+.recording{
+
+    color:#ef4444;
+
+    animation:pulse 1s infinite;
+
+}
+
+@keyframes pulse{
+
+    0%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.2);
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+    }
+
+}
