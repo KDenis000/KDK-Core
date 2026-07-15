@@ -1,1 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KDK Core — AI Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
 
+  <!-- Animated Background -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon"><i class="fas fa-atom"></i></div>
+        <div class="logo-text">
+          <span class="logo-name">KDK Core</span>
+          <span class="logo-version">v1.0.0</span>
+        </div>
+      </div>
+      <button id="sidebarToggle" class="icon-btn" aria-label="Close sidebar">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    </div>
+
+    <button id="newChatBtn" class="new-chat-btn">
+      <i class="fas fa-plus"></i> New Conversation
+    </button>
+
+    <div class="sidebar-section">
+      <h3 class="section-title">Suggested</h3>
+      <div id="sidebarSuggestions" class="sidebar-suggestions"></div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3 class="section-title">History</h3>
+      <div id="chatHistory" class="chat-history">
+        <div class="history-empty">No conversations yet</div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="status-indicator">
+        <span class="status-dot"></span>
+        <span class="status-text">Online — All Sources Connected</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Chat Area -->
+  <main id="mainArea" class="main-area">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <button id="menuBtn" class="icon-btn mobile-only" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="top-bar-title">
+        <i class="fas fa-atom"></i>
+        <span>KDK Core</span>
+      </div>
+      <div class="top-bar-actions">
+        <button id="exportBtn" class="icon-btn" title="Export chat" aria-label="Export chat">
+          <i class="fas fa-download"></i>
+        </button>
+        <button id="clearBtn" class="icon-btn" title="Clear chat" aria-label="Clear chat">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Chat Container -->
+    <div id="chatContainer" class="chat-container">
+      <!-- Welcome Screen -->
+      <div id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-icon"><i class="fas fa-atom"></i></div>
+        <h1 class="welcome-title">KDK Core</h1>
+        <p class="welcome-subtitle">Connected to the world's knowledge. Ask me anything — science, history, math, geography, definitions, and more.</p>
+        <div id="welcomeSuggestions" class="welcome-suggestions"></div>
+      </div>
+
+      <!-- Messages -->
+      <div id="messagesArea" class="messages-area"></div>
+
+      <!-- Typing Indicator -->
+      <div id="typingIndicator" class="typing-indicator hidden">
+        <div class="message ai-message">
+          <div class="message-avatar"><i class="fas fa-atom"></i></div>
+          <div class="message-content">
+            <div class="typing-dots">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-area">
+      <div class="input-wrapper">
+        <textarea id="userInput" placeholder="Ask KDK Core anything..." rows="1" aria-label="Type your message"></textarea>
+        <button id="sendBtn" class="send-btn" aria-label="Send message">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+      <div class="input-footer">
+        <span class="input-hint">Press Enter to send, Shift+Enter for new line</span>
+        <span class="input-sources">
+          <i class="fas fa-globe"></i> Wikipedia
+          <i class="fas fa-book"></i> Dictionary
+          <i class="fas fa-flag"></i> Countries
+          <i class="fas fa-calculator"></i> Math
+        </span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Mobile Overlay -->
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
