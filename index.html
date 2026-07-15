@@ -1,229 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KDK Core — AI Assistant</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KDK Core</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
+
 <body>
 
-  <!-- Animated Background -->
-  <canvas id="bgCanvas"></canvas>
+<!-- Sidebar -->
+<div class="sidebar">
 
-  <!-- Sidebar -->
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-header">
-      <div class="logo">
-        <div class="logo-icon"><i class="fas fa-atom"></i></div>
-        <div class="logo-text">
-          <span class="logo-name">KDK Core</span>
-          <span class="logo-version">v2.0.0</span>
-        </div>
-      </div>
-      <button id="sidebarToggle" class="icon-btn" aria-label="Close sidebar">
-        <i class="fas fa-chevron-left"></i>
-      </button>
+    <div class="logo">
+        <img src="assets/logo.png" alt="KDK Core Logo">
+        <h2>KDK Core</h2>
     </div>
 
-    <button id="newChatBtn" class="new-chat-btn">
-      <i class="fas fa-plus"></i> New Conversation
+    <button class="new-chat">
+        <i class="fa-solid fa-plus"></i>
+        New Chat
     </button>
 
-    <!-- Source Status -->
-    <div class="sidebar-section">
-      <h3 class="section-title"><i class="fas fa-globe"></i> Live Sources</h3>
-      <div class="source-status-grid">
-        <div class="source-item" data-source="web">
-          <span class="source-dot active"></span>
-          <span>Web Search</span>
-        </div>
-        <div class="source-item" data-source="wiki">
-          <span class="source-dot active"></span>
-          <span>Wikipedia</span>
-        </div>
-        <div class="source-item" data-source="news">
-          <span class="source-dot active"></span>
-          <span>News & Docs</span>
-        </div>
-        <div class="source-item" data-source="dict">
-          <span class="source-dot active"></span>
-          <span>Dictionary</span>
-        </div>
-        <div class="source-item" data-source="country">
-          <span class="source-dot active"></span>
-          <span>Countries</span>
-        </div>
-        <div class="source-item" data-source="books">
-          <span class="source-dot active"></span>
-          <span>Books & Papers</span>
-        </div>
-        <div class="source-item" data-source="tech">
-          <span class="source-dot active"></span>
-          <span>Tech Community</span>
-        </div>
-        <div class="source-item" data-source="math">
-          <span class="source-dot active"></span>
-          <span>Math Engine</span>
-        </div>
-      </div>
-    </div>
+    <div class="history">
 
-    <!-- Memory Panel -->
-    <div class="sidebar-section memory-section">
-      <h3 class="section-title"><i class="fas fa-brain"></i> Memory</h3>
-      <div id="memoryPanel" class="memory-panel">
-        <div class="memory-empty">
-          <i class="fas fa-brain"></i>
-          <span>No memories stored yet. Tell me about yourself and I'll remember!</span>
+        <div class="chat-item">
+            <i class="fa-solid fa-message"></i>
+            Welcome
         </div>
-      </div>
-      <div class="memory-actions">
-        <button id="memoryAddBtn" class="memory-action-btn" title="Add a memory">
-          <i class="fas fa-plus"></i> Add
-        </button>
-        <button id="memoryClearBtn" class="memory-action-btn" title="Clear all memories">
-          <i class="fas fa-trash-alt"></i> Clear
-        </button>
-      </div>
-    </div>
 
-    <!-- Suggestions -->
-    <div class="sidebar-section">
-      <h3 class="section-title"><i class="fas fa-lightbulb"></i> Try These</h3>
-      <div id="sidebarSuggestions" class="sidebar-suggestions"></div>
-    </div>
-
-    <!-- Chat History -->
-    <div class="sidebar-section">
-      <h3 class="section-title"><i class="fas fa-clock-rotate-left"></i> History</h3>
-      <div id="chatHistory" class="chat-history">
-        <div class="history-empty">No conversations yet</div>
-      </div>
     </div>
 
     <div class="sidebar-footer">
-      <div class="status-indicator">
-        <span class="status-dot"></span>
-        <span class="status-text">All Sources Connected</span>
-      </div>
+
+        <button>
+            <i class="fa-solid fa-gear"></i>
+            Settings
+        </button>
+
     </div>
-  </aside>
 
-  <!-- Main Chat Area -->
-  <main id="mainArea" class="main-area">
-    <!-- Top Bar -->
-    <header class="top-bar">
-      <button id="menuBtn" class="icon-btn mobile-only" aria-label="Open menu">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="top-bar-title">
-        <i class="fas fa-atom"></i>
-        <span>KDK Core</span>
-      </div>
-      <div class="top-bar-center" id="searchStatus"></div>
-      <div class="top-bar-actions">
-        <button id="memoryToggleBtn" class="icon-btn" title="Toggle memory" aria-label="Toggle memory">
-          <i class="fas fa-brain"></i>
-        </button>
-        <button id="exportBtn" class="icon-btn" title="Export chat" aria-label="Export chat">
-          <i class="fas fa-download"></i>
-        </button>
-        <button id="clearBtn" class="icon-btn" title="Clear chat" aria-label="Clear chat">
-          <i class="fas fa-trash-alt"></i>
-        </button>
-      </div>
-    </header>
+</div>
 
-    <!-- Chat Container -->
-    <div id="chatContainer" class="chat-container">
-      <!-- Welcome Screen -->
-      <div id="welcomeScreen" class="welcome-screen">
-        <div class="welcome-icon"><i class="fas fa-atom"></i></div>
-        <h1 class="welcome-title">KDK Core</h1>
-        <p class="welcome-subtitle">Connected to the world's knowledge. Live web search, encyclopedias, dictionaries, academic sources, tech communities, and a memory that learns you.</p>
+<!-- Main -->
+<div class="main">
 
-        <div class="welcome-sources">
-          <div class="welcome-source-tag"><i class="fas fa-globe"></i> Web Search</div>
-          <div class="welcome-source-tag"><i class="fas fa-newspaper"></i> News</div>
-          <div class="welcome-source-tag"><i class="fas fa-book-open"></i> Wikipedia</div>
-          <div class="welcome-source-tag"><i class="fas fa-graduation-cap"></i> Academic</div>
-          <div class="welcome-source-tag"><i class="fas fa-code"></i> Tech Docs</div>
-          <div class="welcome-source-tag"><i class="fas fa-brain"></i> Memory</div>
+    <!-- Navbar -->
+    <div class="navbar">
+
+        <h1>KDK Core</h1>
+
+        <div class="nav-icons">
+
+            <i class="fa-solid fa-moon"></i>
+
+            <i class="fa-solid fa-user"></i>
+
         </div>
 
-        <div id="welcomeSuggestions" class="welcome-suggestions"></div>
-      </div>
+    </div>
 
-      <!-- Messages -->
-      <div id="messagesArea" class="messages-area"></div>
+    <!-- Chat -->
+    <div class="chat-area">
 
-      <!-- Typing Indicator -->
-      <div id="typingIndicator" class="typing-indicator hidden">
-        <div class="message ai-message">
-          <div class="message-avatar"><i class="fas fa-atom"></i></div>
-          <div class="message-content">
-            <div class="typing-label">Searching sources</div>
-            <div class="typing-dots">
-              <span></span><span></span><span></span>
+        <div class="bot-message">
+
+            <img src="assets/bot.png" class="avatar">
+
+            <div class="message">
+
+                <h3>KDK Core</h3>
+
+                <p>Hello 👋</p>
+
+                <p>I'm your AI assistant.</p>
+
+                <p>How can I help you today?</p>
+
             </div>
-          </div>
+
         </div>
-      </div>
+
     </div>
 
-    <!-- Input Area -->
+    <!-- Input -->
     <div class="input-area">
-      <div class="input-wrapper">
-        <textarea id="userInput" placeholder="Ask KDK Core anything..." rows="1" aria-label="Type your message"></textarea>
-        <button id="sendBtn" class="send-btn" aria-label="Send message">
-          <i class="fas fa-paper-plane"></i>
+
+        <button>
+            <i class="fa-solid fa-paperclip"></i>
         </button>
-      </div>
-      <div class="input-footer">
-        <span class="input-hint">Enter to send, Shift+Enter for new line</span>
-        <div class="input-sources">
-          <span class="input-source-chip"><i class="fas fa-globe"></i> Web</span>
-          <span class="input-source-chip"><i class="fas fa-book-open"></i> Wiki</span>
-          <span class="input-source-chip"><i class="fas fa-book"></i> Dict</span>
-          <span class="input-source-chip"><i class="fas fa-brain"></i> Memory</span>
-          <span class="input-source-chip"><i class="fas fa-calculator"></i> Math</span>
-        </div>
-      </div>
+
+        <input
+        type="text"
+        placeholder="Message KDK Core...">
+
+        <button>
+            <i class="fa-solid fa-microphone"></i>
+        </button>
+
+        <button id="sendBtn">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+
     </div>
-  </main>
 
-  <!-- Mobile Overlay -->
-  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+</div>
 
-  <!-- Memory Modal -->
-  <div id="memoryModal" class="modal hidden">
-    <div class="modal-backdrop"></div>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3><i class="fas fa-brain"></i> Add Memory</h3>
-        <button id="memoryModalClose" class="icon-btn"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="modal-body">
-        <label class="modal-label">Category</label>
-        <select id="memoryCategory" class="modal-select">
-          <option value="preference">Preference (what I like)</option>
-          <option value="project">Project (what I'm building)</option>
-          <option value="style">Style (how I communicate)</option>
-          <option value="fact">Fact (remember this)</option>
-          <option value="language">Language (how I speak)</option>
-        </select>
-        <label class="modal-label">Value</label>
-        <input type="text" id="memoryValue" class="modal-input" placeholder="e.g. I support Arsenal, I love TikTok visuals">
-        <button id="memorySaveBtn" class="modal-save-btn"><i class="fas fa-save"></i> Save Memory</button>
-      </div>
-    </div>
-  </div>
+<script src="script.js"></script>
 
-  <script src="config.js"></script>
-  <script src="app.js"></script>
 </body>
 </html>
