@@ -1,1 +1,45 @@
+/* ===========================
+   KDK Core Global Styles
+=========================== */
 
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Inter,sans-serif;
+    background:#0f172a;
+    color:#fff;
+    display:flex;
+    height:100vh;
+    overflow:hidden;
+}
+
+button{
+    cursor:pointer;
+    transition:.3s;
+}
+
+input,button{
+    outline:none;
+    border:none;
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+img{
+    max-width:100%;
+}
+
+.hidden{
+    display:none;
+}
