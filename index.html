@@ -3,119 +3,603 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KDK Core</title>
+    <title>KDK Core — AI Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #0a0a12;
+            --bg-primary: #10101c;
+            --bg-secondary: #161628;
+            --surface: rgba(255, 255, 255, 0.04);
+            --surface-hover: rgba(255, 255, 255, 0.07);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-primary: #e4e4f0;
+            --text-secondary: #8b8ba8;
+            --text-muted: #55556e;
+            --accent: #00d4aa;
+            --accent-dim: rgba(0, 212, 170, 0.12);
+            --web-color: #4a9eff;
+            --wiki-color: #00d4aa;
+            --book-color: #f0a040;
+            --tech-color: #44ddaa;
+            --error: #ff4466;
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="style.css">
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        /* --- Layout --- */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-primary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: radial-gradient(circle at 30% 20%, rgba(0, 212, 170, 0.03) 0%, transparent 50%), var(--bg-deep);
+        }
+
+        /* --- Sidebar --- */
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--accent), #00a885);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--bg-deep); font-size: 18px; font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0, 212, 170, 0.3);
+        }
+
+        .logo-text h1 { font-size: 16px; font-weight: 600; }
+        .logo-text span { font-size: 11px; color: var(--accent); font-weight: 500; }
+
+        .source-list {
+            padding: 16px 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .source-list h3 {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--text-muted); margin-bottom: 12px;
+        }
+
+        .source-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 10px; border-radius: 8px;
+            margin-bottom: 4px; font-size: 13px; color: var(--text-secondary);
+        }
+
+        .source-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--text-muted); flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .source-dot.active {
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* --- Chat Area --- */
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 0;
+            scroll-behavior: smooth;
+        }
+
+        .chat-area::-webkit-scrollbar { width: 6px; }
+        .chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        .message {
+            display: flex; gap: 16px;
+            padding: 12px 24px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .message.user { flex-direction: row-reverse; }
+
+        .msg-avatar {
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; flex-shrink: 0; margin-top: 4px;
+        }
+
+        .ai .msg-avatar { background: var(--accent-dim); color: var(--accent); }
+        .user .msg-avatar { background: rgba(100, 100, 200, 0.15); color: #8888cc; }
+
+        .msg-content {
+            flex: 1;
+            line-height: 1.65;
+            font-size: 15px;
+        }
+
+        .user .msg-content {
+            background: var(--bg-secondary);
+            padding: 12px 16px;
+            border-radius: 16px 16px 4px 16px;
+            border: 1px solid var(--border);
+            display: inline-block;
+        }
+
+        .msg-content p { margin-bottom: 12px; }
+        .msg-content p:last-child { margin-bottom: 0; }
+        .msg-content strong { color: var(--accent); font-weight: 600; }
+        .msg-content em { color: var(--text-secondary); }
+        .msg-content ul, .msg-content ol { margin: 8px 0 12px 20px; }
+        .msg-content li { margin-bottom: 4px; }
+
+        .msg-content code {
+            background: rgba(0, 212, 170, 0.1); color: var(--accent);
+            padding: 2px 6px; border-radius: 4px; font-family: var(--font-code); font-size: 13px;
+        }
+
+        .msg-content pre {
+            background: var(--bg-deep); border: 1px solid var(--border);
+            padding: 12px 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0;
+            font-family: var(--font-code); font-size: 13px;
+        }
+
+        /* --- Citations & Sources --- */
+        .sources-container {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+        }
+
+        .source-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 8px; border-radius: 4px;
+            font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .source-badge.web { background: rgba(74, 158, 255, 0.15); color: var(--web-color); }
+        .source-badge.wiki { background: var(--accent-dim); color: var(--wiki-color); }
+        .source-badge.books { background: rgba(240, 160, 64, 0.15); color: var(--book-color); }
+        .source-badge.tech { background: rgba(68, 221, 170, 0.15); color: var(--tech-color); }
+
+        .ref-link {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 12px; color: var(--web-color); text-decoration: none;
+            padding: 4px 10px; background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; transition: all 0.2s;
+        }
+        .ref-link:hover { background: rgba(74, 158, 255, 0.1); border-color: rgba(74, 158, 255, 0.3); }
+
+        /* --- Typing Indicator --- */
+        .typing-indicator {
+            display: none; padding: 12px 24px; max-width: 900px; margin: 0 auto; width: 100%;
+        }
+        .typing-indicator.active { display: flex; gap: 16px; }
+        .typing-dots { display: flex; gap: 4px; padding-top: 8px; }
+        .typing-dots span {
+            width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+            animation: bounce 1.4s infinite; opacity: 0.3;
+        }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-8px); opacity: 1; } }
+
+        .search-status {
+            margin-left: 48px; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .search-status i { color: var(--accent); animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- Input Area --- */
+        .input-area {
+            padding: 16px 24px 24px;
+            border-top: 1px solid var(--border);
+            background: rgba(10, 10, 18, 0.8);
+            backdrop-filter: blur(20px);
+        }
+
+        .input-wrapper {
+            max-width: 900px; margin: 0 auto;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            display: flex; align-items: flex-end;
+            padding: 8px 8px 8px 20px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-dim);
+        }
+
+        #queryInput {
+            flex: 1; background: none; border: none; outline: none;
+            color: var(--text-primary); font-family: var(--font-main); font-size: 15px;
+            resize: none; max-height: 120px; padding: 8px 0; line-height: 1.5;
+        }
+        #queryInput::placeholder { color: var(--text-muted); }
+
+        .send-btn {
+            width: 40px; height: 40px; background: var(--accent); border: none; border-radius: 12px;
+            color: var(--bg-deep); font-size: 16px; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0;
+        }
+        .send-btn:hover { background: #00f0c0; transform: scale(1.05); }
+        .send-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+        .input-footer {
+            max-width: 900px; margin: 8px auto 0; display: flex; justify-content: space-between;
+            font-size: 11px; color: var(--text-muted);
+        }
+
+        /* --- Welcome --- */
+        .welcome {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100%; text-align: center; padding: 40px; animation: fadeIn 0.6s ease;
+        }
+
+        .welcome h2 { font-size: 32px; margin-bottom: 8px; background: linear-gradient(135deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .welcome p { color: var(--text-secondary); max-width: 500px; margin-bottom: 32px; }
+
+        .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 600px; }
+        .chip {
+            padding: 10px 16px; background: var(--surface); border: 1px solid var(--border);
+            border-radius: 20px; font-size: 13px; color: var(--text-secondary);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .chip:hover { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .message { padding: 12px 16px; }
+            .input-area { padding: 12px 16px 16px; }
+        }
+    </style>
 </head>
-
 <body>
 
-<!-- Sidebar -->
-<div class="sidebar">
-
-    <div class="logo">
-        <img src="assets/logo.png" alt="KDK Core Logo">
-        <h2>KDK Core</h2>
-    </div>
-
-    <button class="new-chat">
-        <i class="fa-solid fa-plus"></i>
-        New Chat
-    </button>
-
-    <div class="history">
-
-        <div class="chat-item">
-            <i class="fa-solid fa-message"></i>
-            Welcome
-        </div>
-
-    </div>
-
-    <div class="sidebar-footer">
-
-        <button>
-            <i class="fa-solid fa-gear"></i>
-            Settings
-        </button>
-
-    </div>
-
-</div>
-
-<!-- Main -->
-<div class="main">
-
-    <!-- Navbar -->
-    <div class="navbar">
-
-        <h1>KDK Core</h1>
-
-        <div class="nav-icons">
-
-            <i class="fa-solid fa-moon"></i>
-
-            <i class="fa-solid fa-user"></i>
-
-        </div>
-
-    </div>
-
-    <!-- Chat -->
-    <div class="chat-area">
-
-        <div class="bot-message">
-
-            <img src="assets/bot.png" class="avatar">
-
-            <div class="message">
-
-                <h3>KDK Core</h3>
-
-                <p>Hello 👋</p>
-
-                <p>I'm your AI assistant.</p>
-
-                <p>How can I help you today?</p>
-
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"><i class="fas fa-atom"></i></div>
+            <div class="logo-text">
+                <h1>KDK Core</h1>
+                <span>Deep Search AI v2.0</span>
             </div>
+        </div>
+        <div class="source-list">
+            <h3>Connected Data Sources</h3>
+            <div class="source-item"><div class="source-dot active" id="dot-web"></div>Web Search (DDG)</div>
+            <div class="source-item"><div class="source-dot active" id="dot-wiki"></div>Wikipedia</div>
+            <div class="source-item"><div class="source-dot active" id="dot-books"></div>Open Library</div>
+            <div class="source-item"><div class="source-dot active" id="dot-tech"></div>Hacker News</div>
+            <div class="source-item"><div class="source-dot active" id="dot-dict"></div>Dictionary</div>
+            <div class="source-item"><div class="source-dot active" id="dot-country"></div>Countries</div>
+        </div>
+    </aside>
 
+    <main class="main-container">
+        <div class="chat-area" id="chatArea">
+            <div class="welcome" id="welcomeScreen">
+                <div class="logo-icon" style="width:64px; height:64px; font-size:28px; margin-bottom:24px; box-shadow: 0 8px 24px rgba(0,212,170,0.4);">
+                    <i class="fas fa-atom"></i>
+                </div>
+                <h2>KDK Core</h2>
+                <p>Connected to the world's knowledge. I search 6 live sources simultaneously to give you comprehensive, cited answers like Copilot or ChatGPT.</p>
+                <div class="chips">
+                    <div class="chip" onclick="ask('What is Quantum Computing?')">What is Quantum Computing?</div>
+                    <div class="chip" onclick="ask('Latest news on AI')">Latest news on AI</div>
+                    <div class="chip" onclick="ask('Tell me about Japan')">Tell me about Japan</div>
+                    <div class="chip" onclick="ask('Books on Machine Learning')">Books on Machine Learning</div>
+                    <div class="chip" onclick="ask('Define Serendipity')">Define Serendipity</div>
+                </div>
+            </div>
+            
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="msg-avatar" style="background: var(--accent-dim); color: var(--accent);"><i class="fas fa-atom"></i></div>
+                <div>
+                    <div class="search-status" id="searchStatus"><i class="fas fa-spinner"></i> Searching sources...</div>
+                    <div class="typing-dots"><span></span><span></span><span></span></div>
+                </div>
+            </div>
         </div>
 
-    </div>
+        <div class="input-area">
+            <div class="input-wrapper">
+                <textarea id="queryInput" rows="1" placeholder="Ask anything... I search the web, books, encyclopedias & more"></textarea>
+                <button class="send-btn" id="sendBtn" onclick="handleSend()"><i class="fas fa-arrow-up"></i></button>
+            </div>
+            <div class="input-footer">
+                <span>Press Enter to send</span>
+                <span>6 Live Sources Active</span>
+            </div>
+        </div>
+    </main>
 
-    <!-- Input -->
-    <div class="input-area">
+    <script>
+        // ==========================================
+        // KDK CORE AI ENGINE - SINGLE FILE EDITION
+        // ==========================================
 
-        <button>
-            <i class="fa-solid fa-paperclip"></i>
-        </button>
+        const chatArea = document.getElementById('chatArea');
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const searchStatus = document.getElementById('searchStatus');
+        const queryInput = document.getElementById('queryInput');
+        const sendBtn = document.getElementById('sendBtn');
 
-        <input
-        type="text"
-        placeholder="Message KDK Core...">
+        let isProcessing = false;
 
-        <button>
-            <i class="fa-solid fa-microphone"></i>
-        </button>
+        // Auto-resize textarea
+        queryInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
 
-        <button id="sendBtn">
-            <i class="fa-solid fa-paper-plane"></i>
-        </button>
+        queryInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        });
 
-    </div>
+        function ask(text) {
+            queryInput.value = text;
+            handleSend();
+        }
 
-</div>
+        async function handleSend() {
+            const query = queryInput.value.trim();
+            if (!query || isProcessing) return;
 
-<script src="script.js"></script>
+            isProcessing = true;
+            sendBtn.disabled = true;
+            welcomeScreen.style.display = 'none';
+            
+            // Render User Message
+            appendMessage(query, 'user');
+            queryInput.value = '';
+            queryInput.style.height = 'auto';
 
+            // Show typing
+            typingIndicator.classList.add('active');
+            scrollToBottom();
+
+            // Fetch data from all sources
+            const result = await fetchAllSources(query);
+
+            // Hide typing, render AI message
+            typingIndicator.classList.remove('active');
+            appendMessage(result.text, 'ai', result.sources, result.links);
+            scrollToBottom();
+
+            isProcessing = false;
+            sendBtn.disabled = false;
+        }
+
+        // ==========================================
+        // MULTI-SOURCE DATA FETCHER
+        // ==========================================
+        async function fetchAllSources(query) {
+            let textParts = [];
+            let sourcesUsed = [];
+            let refLinks = [];
+            let isDefinition = /^(what is|define|meaning of|definition)/i.test(query);
+            let isCountry = /^(tell me about|info about|facts about)\s/i.test(query);
+            let isBook = /^(books on|books about|find books)/i.test(query);
+
+            const statusMessages = [
+                'Searching the web...',
+                'Querying Wikipedia...',
+                'Checking libraries & docs...',
+                'Synthesizing response...'
+            ];
+            
+            // Animate search status
+            let statusIdx = 0;
+            const statusInterval = setInterval(() => {
+                searchStatus.innerHTML = `<i class="fas fa-spinner"></i> ${statusMessages[statusIdx % statusMessages.length]}`;
+                statusIdx++;
+            }, 800);
+
+            try {
+                // 1. Dictionary Check (if it looks like a definition)
+                if (isDefinition) {
+                    const word = query.replace(/^(what is|define|meaning of|definition of)\s+/i, '').trim();
+                    const dictData = await fetchJSON(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+                    if (dictData && dictData[0]) {
+                        const d = dictData[0];
+                        const meaning = d.meanings[0];
+                        textParts.push(`**📖 Dictionary: ${d.word}** ${d.phonetic || ''}\n*${meaning.partOfSpeech}*: ${meaning.definitions[0].definition}\n*Example*: "${meaning.definitions[0].example || 'N/A'}"`);
+                        sourcesUsed.push('Dictionary');
+                    }
+                }
+
+                // 2. Country Check
+                if (isCountry) {
+                    const cName = query.replace(/^(tell me about|info about|facts about)\s+/i, '').trim();
+                    const cData = await fetchJSON(`https://restcountries.com/v3.1/name/${cName}`);
+                    if (cData && cData[0]) {
+                        const c = cData[0];
+                        textParts.push(`**🌍 Country: ${c.name.common}**\n- **Capital**: ${c.capital?.[0] || 'N/A'}\n- **Population**: ${c.population?.toLocaleString()}\n- **Region**: ${c.region}\n- **Currency**: ${Object.values(c.currencies||{})[0]?.name || 'N/A'}`);
+                        sourcesUsed.push('Countries');
+                    }
+                }
+
+                // 3. DuckDuckGo Web Search (Free, CORS-enabled)
+                const ddgData = await fetchJSON(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&t=kdk_core`);
+                if (ddgData) {
+                    if (ddgData.Abstract) {
+                        textParts.push(`**🌐 Web Result: ${ddgData.Heading}**\n${ddgData.Abstract}`);
+                        if (ddgData.AbstractURL) refLinks.push({ text: ddgData.AbstractSource || 'Source', url: ddgData.AbstractURL });
+                        sourcesUsed.push('Web Search');
+                    }
+                    if (ddgData.RelatedTopics) {
+                        let related = ddgData.RelatedTopics.slice(0, 3).map(t => t.Text).filter(Boolean).join('\n- ');
+                        if (related) {
+                            textParts.push(`**🔗 Related Topics:**\n- ${related}`);
+                            ddgData.RelatedTopics.slice(0, 3).forEach(t => { if(t.FirstURL) refLinks.push({text: 'Web Link', url: t.FirstURL}); });
+                        }
+                    }
+                }
+
+                // 4. Wikipedia API
+                const wikiData = await fetchJSON(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
+                if (wikiData && wikiData.extract && !ddgData?.Abstract) { // Avoid duplicate if DDG already pulled Wikipedia abstract
+                    textParts.push(`**📚 Wikipedia:**\n${wikiData.extract}`);
+                    if (wikiData.content_urls?.desktop?.page) refLinks.push({ text: 'Wikipedia', url: wikiData.content_urls.desktop.page });
+                    sourcesUsed.push('Wikipedia');
+                }
+
+                // 5. Open Library (Books/Academic)
+                const olData = await fetchJSON(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=3&fields=title,author_name,first_publish_year,key`);
+                if (olData && olData.docs && olData.docs.length > 0) {
+                    let books = olData.docs.map(b => `- *${b.title}* by ${b.author_name?.[0] || 'Unknown'} (${b.first_publish_year || 'N/A'})`).join('\n');
+                    textParts.push(`**📖 Books & Literature:**\n${books}`);
+                    olData.docs.forEach(b => refLinks.push({text: b.title.substring(0,20), url: `https://openlibrary.org${b.key}`}));
+                    sourcesUsed.push('Open Library');
+                }
+
+                // 6. Hacker News (Tech Community)
+                const hnData = await fetchJSON(`https://hn.algolia.com/api/v1/search?query=${encodeURIComponent(query)}&tags=story&hitsPerPage=3`);
+                if (hnData && hnData.hits && hnData.hits.length > 0) {
+                    let tech = hnData.hits.map(h => `- ${h.title} (${h.points} points)`).join('\n');
+                    textParts.push(`**💻 Tech Community (HN):**\n${tech}`);
+                    hnData.hits.forEach(h => refLinks.push({text: 'HN Discussion', url: h.url || `https://news.ycombinator.com/item?id=${h.objectID}`}));
+                    sourcesUsed.push('Hacker News');
+                }
+
+                // 7. Math Engine (Fallback)
+                if (/^[\d\s\+\-\*\/\^\(\)\.sqrt]+$/.test(query) && /\d/.test(query)) {
+                    try {
+                        const safeExpr = query.replace(/\^/g, '**').replace(/sqrt\(/gi, 'Math.sqrt(');
+                        const mathRes = new Function(`return ${safeExpr}`)();
+                        if (typeof mathRes === 'number' && isFinite(mathRes)) {
+                            textParts.push(`**🧮 Math Engine:**\n${query} = **${mathRes}**`);
+                            sourcesUsed.push('Math');
+                        }
+                    } catch(e) {}
+                }
+
+            } catch (e) {
+                console.error("API Fetch Error:", e);
+            }
+
+            clearInterval(statusInterval);
+
+            // Fallback if nothing found
+            if (textParts.length === 0) {
+                textParts.push("I searched across all connected sources but couldn't find specific data for your query. Try rephrasing or asking about a specific person, place, or concept.");
+                sourcesUsed.push('None');
+            }
+
+            return {
+                text: textParts.join('\n\n---\n\n'),
+                sources: [...new Set(sourcesUsed)],
+                links: refLinks
+            };
+        }
+
+        // Helper to fetch JSON with error suppression
+        async function fetchJSON(url) {
+            try {
+                const res = await fetch(url);
+                if (!res.ok) return null;
+                return await res.json();
+            } catch (e) {
+                return null; // CORS or network error, suppress
+            }
+        }
+
+        // ==========================================
+        // UI RENDERING
+        // ==========================================
+        function appendMessage(content, type, sources = [], links = []) {
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'msg-avatar';
+            avatar.innerHTML = type === 'ai' ? '<i class="fas fa-atom"></i>' : '<i class="fas fa-user"></i>';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'msg-content';
+            
+            // Parse Markdown-like syntax
+            let html = content
+                .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                .replace(/^---$/gm, '<hr style="border:none; border-top:1px solid var(--border); margin:12px 0;">')
+                .replace(/^- (.+)/gm, '<li>$1</li>')
+                .replace(/\n/g, '<br>');
+            
+            // Wrap lists
+            html = html.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
+            contentDiv.innerHTML = `<p>${html}</p>`;
+
+            // Append sources and links for AI
+            if (type === 'ai' && (sources.length > 0 || links.length > 0)) {
+                const footer = document.createElement('div');
+                footer.className = 'sources-container';
+                
+                sources.forEach(src => {
+                    const srcClass = src === 'Web Search' ? 'web' : src === 'Wikipedia' ? 'wiki' : src === 'Open Library' ? 'books' : 'tech';
+                    footer.innerHTML += `<span class="source-badge ${srcClass}"><i class="fas fa-circle" style="font-size:6px"></i> ${src}</span>`;
+                });
+
+                links.forEach(link => {
+                    footer.innerHTML += `<a href="${link.url}" target="_blank" class="ref-link"><i class="fas fa-external-link-alt"></i> ${link.text}</a>`;
+                });
+
+                contentDiv.appendChild(footer);
+            }
+
+            div.appendChild(avatar);
+            div.appendChild(contentDiv);
+            
+            // Insert before typing indicator
+            chatArea.insertBefore(div, typingIndicator);
+        }
+
+        function scrollToBottom() {
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+    </script>
 </body>
 </html>
