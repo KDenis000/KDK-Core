@@ -21,7 +21,7 @@
         <div class="logo-icon"><i class="fas fa-atom"></i></div>
         <div class="logo-text">
           <span class="logo-name">KDK Core</span>
-          <span class="logo-version">v1.0.0</span>
+          <span class="logo-version">v2.0.0</span>
         </div>
       </div>
       <button id="sidebarToggle" class="icon-btn" aria-label="Close sidebar">
@@ -33,13 +33,73 @@
       <i class="fas fa-plus"></i> New Conversation
     </button>
 
+    <!-- Source Status -->
     <div class="sidebar-section">
-      <h3 class="section-title">Suggested</h3>
+      <h3 class="section-title"><i class="fas fa-globe"></i> Live Sources</h3>
+      <div class="source-status-grid">
+        <div class="source-item" data-source="web">
+          <span class="source-dot active"></span>
+          <span>Web Search</span>
+        </div>
+        <div class="source-item" data-source="wiki">
+          <span class="source-dot active"></span>
+          <span>Wikipedia</span>
+        </div>
+        <div class="source-item" data-source="news">
+          <span class="source-dot active"></span>
+          <span>News & Docs</span>
+        </div>
+        <div class="source-item" data-source="dict">
+          <span class="source-dot active"></span>
+          <span>Dictionary</span>
+        </div>
+        <div class="source-item" data-source="country">
+          <span class="source-dot active"></span>
+          <span>Countries</span>
+        </div>
+        <div class="source-item" data-source="books">
+          <span class="source-dot active"></span>
+          <span>Books & Papers</span>
+        </div>
+        <div class="source-item" data-source="tech">
+          <span class="source-dot active"></span>
+          <span>Tech Community</span>
+        </div>
+        <div class="source-item" data-source="math">
+          <span class="source-dot active"></span>
+          <span>Math Engine</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Memory Panel -->
+    <div class="sidebar-section memory-section">
+      <h3 class="section-title"><i class="fas fa-brain"></i> Memory</h3>
+      <div id="memoryPanel" class="memory-panel">
+        <div class="memory-empty">
+          <i class="fas fa-brain"></i>
+          <span>No memories stored yet. Tell me about yourself and I'll remember!</span>
+        </div>
+      </div>
+      <div class="memory-actions">
+        <button id="memoryAddBtn" class="memory-action-btn" title="Add a memory">
+          <i class="fas fa-plus"></i> Add
+        </button>
+        <button id="memoryClearBtn" class="memory-action-btn" title="Clear all memories">
+          <i class="fas fa-trash-alt"></i> Clear
+        </button>
+      </div>
+    </div>
+
+    <!-- Suggestions -->
+    <div class="sidebar-section">
+      <h3 class="section-title"><i class="fas fa-lightbulb"></i> Try These</h3>
       <div id="sidebarSuggestions" class="sidebar-suggestions"></div>
     </div>
 
+    <!-- Chat History -->
     <div class="sidebar-section">
-      <h3 class="section-title">History</h3>
+      <h3 class="section-title"><i class="fas fa-clock-rotate-left"></i> History</h3>
       <div id="chatHistory" class="chat-history">
         <div class="history-empty">No conversations yet</div>
       </div>
@@ -48,7 +108,7 @@
     <div class="sidebar-footer">
       <div class="status-indicator">
         <span class="status-dot"></span>
-        <span class="status-text">Online — All Sources Connected</span>
+        <span class="status-text">All Sources Connected</span>
       </div>
     </div>
   </aside>
@@ -64,7 +124,11 @@
         <i class="fas fa-atom"></i>
         <span>KDK Core</span>
       </div>
+      <div class="top-bar-center" id="searchStatus"></div>
       <div class="top-bar-actions">
+        <button id="memoryToggleBtn" class="icon-btn" title="Toggle memory" aria-label="Toggle memory">
+          <i class="fas fa-brain"></i>
+        </button>
         <button id="exportBtn" class="icon-btn" title="Export chat" aria-label="Export chat">
           <i class="fas fa-download"></i>
         </button>
@@ -80,7 +144,17 @@
       <div id="welcomeScreen" class="welcome-screen">
         <div class="welcome-icon"><i class="fas fa-atom"></i></div>
         <h1 class="welcome-title">KDK Core</h1>
-        <p class="welcome-subtitle">Connected to the world's knowledge. Ask me anything — science, history, math, geography, definitions, and more.</p>
+        <p class="welcome-subtitle">Connected to the world's knowledge. Live web search, encyclopedias, dictionaries, academic sources, tech communities, and a memory that learns you.</p>
+
+        <div class="welcome-sources">
+          <div class="welcome-source-tag"><i class="fas fa-globe"></i> Web Search</div>
+          <div class="welcome-source-tag"><i class="fas fa-newspaper"></i> News</div>
+          <div class="welcome-source-tag"><i class="fas fa-book-open"></i> Wikipedia</div>
+          <div class="welcome-source-tag"><i class="fas fa-graduation-cap"></i> Academic</div>
+          <div class="welcome-source-tag"><i class="fas fa-code"></i> Tech Docs</div>
+          <div class="welcome-source-tag"><i class="fas fa-brain"></i> Memory</div>
+        </div>
+
         <div id="welcomeSuggestions" class="welcome-suggestions"></div>
       </div>
 
@@ -92,6 +166,7 @@
         <div class="message ai-message">
           <div class="message-avatar"><i class="fas fa-atom"></i></div>
           <div class="message-content">
+            <div class="typing-label">Searching sources</div>
             <div class="typing-dots">
               <span></span><span></span><span></span>
             </div>
@@ -109,19 +184,44 @@
         </button>
       </div>
       <div class="input-footer">
-        <span class="input-hint">Press Enter to send, Shift+Enter for new line</span>
-        <span class="input-sources">
-          <i class="fas fa-globe"></i> Wikipedia
-          <i class="fas fa-book"></i> Dictionary
-          <i class="fas fa-flag"></i> Countries
-          <i class="fas fa-calculator"></i> Math
-        </span>
+        <span class="input-hint">Enter to send, Shift+Enter for new line</span>
+        <div class="input-sources">
+          <span class="input-source-chip"><i class="fas fa-globe"></i> Web</span>
+          <span class="input-source-chip"><i class="fas fa-book-open"></i> Wiki</span>
+          <span class="input-source-chip"><i class="fas fa-book"></i> Dict</span>
+          <span class="input-source-chip"><i class="fas fa-brain"></i> Memory</span>
+          <span class="input-source-chip"><i class="fas fa-calculator"></i> Math</span>
+        </div>
       </div>
     </div>
   </main>
 
   <!-- Mobile Overlay -->
   <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+  <!-- Memory Modal -->
+  <div id="memoryModal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-brain"></i> Add Memory</h3>
+        <button id="memoryModalClose" class="icon-btn"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <label class="modal-label">Category</label>
+        <select id="memoryCategory" class="modal-select">
+          <option value="preference">Preference (what I like)</option>
+          <option value="project">Project (what I'm building)</option>
+          <option value="style">Style (how I communicate)</option>
+          <option value="fact">Fact (remember this)</option>
+          <option value="language">Language (how I speak)</option>
+        </select>
+        <label class="modal-label">Value</label>
+        <input type="text" id="memoryValue" class="modal-input" placeholder="e.g. I support Arsenal, I love TikTok visuals">
+        <button id="memorySaveBtn" class="modal-save-btn"><i class="fas fa-save"></i> Save Memory</button>
+      </div>
+    </div>
+  </div>
 
   <script src="config.js"></script>
   <script src="app.js"></script>
